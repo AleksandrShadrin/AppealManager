@@ -9,7 +9,7 @@
         /// <returns>Возвращает аббревиатуру, как строку</returns>
         public static string GetNameAbbreviature(string name)
         {
-            var nameParts = name.Split(" ");
+            var nameParts = name.Trim().Split(" ");
 
             if (nameParts.Length != 3 )
                 return name;

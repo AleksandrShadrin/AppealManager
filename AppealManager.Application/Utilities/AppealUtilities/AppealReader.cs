@@ -2,7 +2,7 @@
 
 namespace AppealManager.Application.Utilities.AppealUtilities
 {
-    internal class AppealReader : IAppealReader
+    public class AppealReader : IAppealReader
     {
         private readonly IAppealParser _parser;
 

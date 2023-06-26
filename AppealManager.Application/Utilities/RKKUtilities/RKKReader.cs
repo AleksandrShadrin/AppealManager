@@ -2,7 +2,7 @@
 
 namespace AppealManager.Application.Utilities.RKKUtilities
 {
-    internal class RKKReader : IRKKReader
+    public class RKKReader : IRKKReader
     {
         private readonly IRKKParser _parser;
 
