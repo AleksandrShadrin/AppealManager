@@ -10,7 +10,11 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddSingleton<TextFileReader>();
-builder.Services.AddSingleton<RKKStatsSaverFacade>();
+builder.Services.AddSingleton(sp => 
+{ 
+    var clock = () => DateTime.Now;
+    return new RKKMultipleStatsSaver(clock);
+});
 builder.Services.AddApplication();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 

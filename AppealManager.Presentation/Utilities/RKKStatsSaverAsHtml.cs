@@ -3,8 +3,18 @@ using System.Text;
 
 namespace AppealManager.Presentation.Utilities
 {
+    /// <summary>
+    /// Сохраняет коллекцию RKKStats в виде html таблицы
+    /// </summary>
     public class RKKStatsSaverAsHtml : IRKKStatsSaver
     {
+        private Func<DateTime> _clock;
+        
+        public RKKStatsSaverAsHtml(Func<DateTime> clock)
+        {
+            _clock = clock;
+        }
+
         /// <summary>
         /// Сохраняет РКК статистики, как html таблицу
         /// </summary>
@@ -23,6 +33,9 @@ namespace AppealManager.Presentation.Utilities
                 sb.Append(@"</tr>");
             }
             sb.Append(@"</table>");
+            sb.Append("<h2>");
+            sb.Append($"Отчет сохранен: {_clock()}");
+            sb.Append("</h2>");
             return sb.ToString();
         }
 
