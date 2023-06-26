@@ -1,0 +1,65 @@
+﻿@page "/"
+
+@using AppealManager.Application.Models;
+@using AppealManager.Application.Services;
+@using AppealManager.Core.Entities;
+@using AppealManager.Presentation.Services;
+@using System.Diagnostics;
+
+@inject TextFileReader textFileReader;
+@inject IAppealManagerService appealManagerService
+@inject RKKStatisticsService rkkStatisticService
+
+<div class="mb-3 d-flex col-xl-6 col-md-8 flex-column gap-4 card align-content-center mx-auto p-4 mt-4">
+    <div>
+        <AppealManager.Presentation.Components.AppealsSelector @bind-Appeals="appeals" @bind-Appeals:after="OnAppealsRead"/>
+    </div>
+    <div>
+        <AppealManager.Presentation.Components.RKKsSelector @bind-RKKs="RKKs" @bind-RKKs:after="OnRKKsRead"/>
+    </div>
+    <button class="btn btn-primary" @onclick="OnClick" disabled="@(!RKKsIsReaded || !appealsIsReaded)"> Расчитать </button>
+    @if (timeIsMeasured)
+    {
+        <h3>Время выполнения алгоритма: @time мс</h3>
+    }
+</div>
+@if (stats.Count > 0)
+{
+    <div class="card col-xl-6 col-md-8 mx-auto overflow-scroll p-2" style="height:400px;">
+        <AppealManager.Presentation.Components.RKKStatsTable Stats="stats"/>
+    </div>
+}
+
+@code
+{
+    List<Appeal> appeals = new();
+    List<RKK> RKKs = new();
+    List<RKKStats> stats = new();
+
+    bool RKKsIsReaded = false;
+    bool appealsIsReaded = false;
+
+    bool timeIsMeasured = false;
+    long time = 0;
+
+    Task OnAppealsRead()
+    {
+        appealsIsReaded = true;
+        return Task.CompletedTask;    
+    }
+
+    Task OnRKKsRead()
+    {
+        RKKsIsReaded = true;
+        return Task.CompletedTask;    
+    }
+
+    void OnClick()
+    {
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        stats = rkkStatisticService.GetStats(RKKs, appeals);
+        stopwatch.Stop();
+        time = stopwatch.ElapsedMilliseconds;
+        timeIsMeasured = true;
+    }
+}
