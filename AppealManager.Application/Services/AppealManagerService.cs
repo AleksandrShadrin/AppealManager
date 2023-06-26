@@ -1,5 +1,5 @@
-﻿using AppealManager.Application.AppealUtilities;
-using AppealManager.Application.RKKUtilities;
+﻿using AppealManager.Application.Utilities.AppealUtilities;
+using AppealManager.Application.Utilities.RKKUtilities;
 using AppealManager.Core.Entities;
 
 namespace AppealManager.Application.Services
