@@ -5,11 +5,15 @@ namespace AppealManager.Core.Entities
     /// <summary>
     /// Обращение
     /// </summary>
-    /// <param name="Appealed">Руководитель</param>
-    /// <param name="MainContractor">главный исполнитель</param>
     public record Appeal
     {
+        /// <summary>
+        /// Руководитель
+        /// </summary>
         public Manager Appealed { get; private set; }
+        /// <summary>
+        /// Главный исполнитель
+        /// </summary>
         public Contractor MainContractor { get; private set; }
 
         internal Appeal(Manager appealed, Contractor contractor)
