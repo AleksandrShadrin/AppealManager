@@ -1,0 +1,37 @@
+﻿@using AppealManager.Application.Services;
+@using AppealManager.Core.Entities;
+@using System.Diagnostics;
+
+@inject IAppealManagerService appealManagerService
+
+<TextFileSelector Title="Выбор РКК файла." TextChanged="OnTextChanged" />
+@if (isParsed)
+{
+    <h5>Ифнормация из файла считана за: @timeForParse мс</h5>
+}
+
+@code {
+    [Parameter] 
+    public List<RKK> RKKs { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<List<RKK>> RKKsChanged { get; set; }
+
+    long timeForParse = 0;
+    bool isParsed = false;
+
+    void OnTextChanged(string text)
+    {
+        var stopWatch = Stopwatch.StartNew();
+
+        var newRkks = appealManagerService
+            .GetRKKs(text)
+            .ToList();
+
+        RKKsChanged.InvokeAsync(newRkks);
+
+        stopWatch.Stop();
+        isParsed = true;
+        timeForParse = stopWatch.ElapsedMilliseconds;
+    }
+}

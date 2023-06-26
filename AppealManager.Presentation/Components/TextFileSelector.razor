@@ -1,0 +1,69 @@
+﻿@using AppealManager.Presentation.Services;
+@using System.Diagnostics;
+
+@inject TextFileReader textFileReader;
+
+<label class="h5 form-label">@Title</label>
+<InputFile class="form-control form-file-input mb-2" OnChange="@LoadFile" disabled="@isLoading"/>
+
+@if (timeWasMeasured)
+{
+    <h5>Файл загружен за: @elapsedMilliseconds мс</h5>    
+}
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Text { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> TextChanged { get; set; }
+
+    private bool isLoading = false;
+    private long elapsedMilliseconds = 0;
+    private bool timeWasMeasured = false;
+
+    /// <summary>
+    /// Загружает текст файла
+    /// </summary>
+    /// <param name="e">Информация об выбранном файле</param>
+    async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        isLoading = true;
+        string text = "";
+
+        elapsedMilliseconds = await MeasureTime
+            (
+                async () => text = await GetTextFromFile(e.File)
+            );
+
+        timeWasMeasured = true;
+        await TextChanged.InvokeAsync(text);
+        isLoading = false;
+    }
+
+    /// <summary>
+    /// Измеряет время выполнения метода
+    /// </summary>
+    /// <param name="method">метод</param>
+    /// <returns>Возращает число миллисекунд</returns>
+    async Task<long> MeasureTime(Func<Task> method)
+    {
+        var stopwatch = Stopwatch.StartNew();
+
+        await method();
+
+        stopwatch.Stop();
+        return stopwatch.ElapsedMilliseconds;
+    }
+
+    async Task<string> GetTextFromFile(IBrowserFile file)
+        => await textFileReader.ReadFileAsync(file)
+            .Match
+                (
+                    Some: x => x,
+                    None: () => ""
+                );
+}
