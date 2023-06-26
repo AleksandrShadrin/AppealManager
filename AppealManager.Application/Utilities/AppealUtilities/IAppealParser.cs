@@ -1,4 +1,4 @@
-﻿namespace AppealManager.Application.AppealUtilities
+﻿namespace AppealManager.Application.Utilities.AppealUtilities
 {
     public interface IAppealParser
     {
@@ -7,6 +7,6 @@
         /// </summary>
         /// <param name="text">строка</param>
         /// <returns>Возвращает обращение</returns>
-        AppealManager.Core.Entities.Appeal Parse(string line);
+        Core.Entities.Appeal Parse(string line);
     }
 }

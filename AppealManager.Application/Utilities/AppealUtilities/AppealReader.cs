@@ -1,6 +1,6 @@
 ﻿using AppealManager.Core.Entities;
 
-namespace AppealManager.Application.AppealUtilities
+namespace AppealManager.Application.Utilities.AppealUtilities
 {
     internal class AppealReader : IAppealReader
     {

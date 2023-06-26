@@ -1,4 +1,4 @@
-﻿namespace AppealManager.Application.AppealUtilities
+﻿namespace AppealManager.Application.Utilities.AppealUtilities
 {
     public interface IAppealReader
     {
@@ -7,6 +7,6 @@
         /// </summary>
         /// <param name="text">строки</param>
         /// <returns>Возвращает коллекцию обращений</returns>
-        IEnumerable<AppealManager.Core.Entities.Appeal> ReadAppeals(IEnumerable<string> text);
+        IEnumerable<Core.Entities.Appeal> ReadAppeals(IEnumerable<string> text);
     }
 }

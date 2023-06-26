@@ -1,4 +1,4 @@
-﻿namespace AppealManager.Application.RKKUtilities
+﻿namespace AppealManager.Application.Utilities.RKKUtilities
 {
     public interface IRKKReader
     {
@@ -7,6 +7,6 @@
         /// </summary>
         /// <param name="text">строки</param>
         /// <returns>Возвращает коллекцию RKK</returns>
-        IEnumerable<AppealManager.Core.Entities.RKK> ReadRKKs(IEnumerable<string> text);
+        IEnumerable<Core.Entities.RKK> ReadRKKs(IEnumerable<string> text);
     }
 }

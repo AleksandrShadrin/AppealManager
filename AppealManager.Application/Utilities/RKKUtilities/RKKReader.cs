@@ -1,6 +1,6 @@
 ﻿using AppealManager.Core.Entities;
 
-namespace AppealManager.Application.RKKUtilities
+namespace AppealManager.Application.Utilities.RKKUtilities
 {
     internal class RKKReader : IRKKReader
     {
