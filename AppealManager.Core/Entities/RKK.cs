@@ -22,12 +22,12 @@ namespace AppealManager.Core.Entities
             MainContractor = contractor;
         }
 
-        public RKK Build(string managerName, List<string> contractors)
+        public static RKK Build(string managerName, List<string> contractors)
         {
             var manager = new Manager(managerName);
             Contractor mainContractor;
 
-            if (managerName is "Климов Сергей Александрович")
+            if (StringComparer.InvariantCulture.Compare(managerName, "Климов С.А.") == 0)
                 mainContractor = new Contractor(contractors.First());
             else
                 mainContractor = new Contractor(managerName);
