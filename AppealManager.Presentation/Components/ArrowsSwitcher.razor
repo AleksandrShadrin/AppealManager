@@ -14,7 +14,7 @@
     string GetTextColor()
         => Disabled ?
             "text-black-50"
-            : !State 
+            : State 
                 ? "text-danger" 
                 : "text-success";
 
