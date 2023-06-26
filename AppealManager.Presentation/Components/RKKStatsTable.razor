@@ -1,9 +1,9 @@
 ﻿@using AppealManager.Application.Models;
 @using AppealManager.Presentation.Utilities;
-@using static AppealManager.Presentation.Utilities.RKKStatsSaverFacade;
+@using static AppealManager.Presentation.Utilities.RKKMultipleStatsSaver;
 
 @inject IJSRuntime JSRuntime
-@inject RKKStatsSaverFacade saver
+@inject RKKMultipleStatsSaver saver
 
 <div class="d-flex align-content-center justify-content-end gap-2">
     <b>Экспорт html</b> <i class="bi bi-arrow-up-right-square h5" style="cursor:pointer;" @onclick="() => SaveAs(SaveOptions.HTML_TABLE)"></i>
