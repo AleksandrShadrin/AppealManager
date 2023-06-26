@@ -1,0 +1,157 @@
+﻿@using AppealManager.Application.Models;
+@using AppealManager.Presentation.Utilities;
+@using static AppealManager.Presentation.Utilities.RKKStatsSaverFacade;
+
+@inject IJSRuntime JSRuntime
+@inject RKKStatsSaverFacade saver
+
+<div class="d-flex align-content-center justify-content-end gap-2">
+    <b>Экспорт html</b> <i class="bi bi-arrow-up-right-square h5" style="cursor:pointer;" @onclick="() => SaveAs(SaveOptions.HTML_TABLE)"></i>
+    <b>Экспорт text</b> <i class="bi bi-arrow-up-right-square h5" style="cursor:pointer;" @onclick="() => SaveAs(SaveOptions.PLAIN_TEXT)"></i>
+</div>
+<table class="table table-striped" style="min-width:750px;">
+    <thead>
+        <tr class="text-center">
+            <th><i>Главный исполнитель</i><ArrowsSwitcher StateChanged="ChangeOnSortBySurname" Disabled="@(sortBySurname is SortOptions.NONE)"/></th>
+            <th><i>Число РКК</i><ArrowsSwitcher StateChanged="ChangeOnSortByRKK" Disabled="@(sortByRKK is SortOptions.NONE)" /></th>
+            <th><i>Число обращений</i><ArrowsSwitcher StateChanged="ChangeOnSortByAppeals" Disabled="@(sortByAppeals is SortOptions.NONE)"/></th>
+            <th><i>Суммарное число документов</i><ArrowsSwitcher StateChanged="ChangeOnSortBySummaryDocuments" Disabled="@(sortBySummaryDocuments is SortOptions.NONE)"/></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var stat in GetSorted())
+    {
+        <tr>
+            <th>@stat.MainContractor</th>
+            <th class="text-center">@stat.NumberOfRKK</th>
+            <th class="text-center">@stat.NumOfAppeals</th>
+            <th class="text-center">@stat.SummaryDocuments</th>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public List<RKKStats> Stats { get; set; } = new();
+
+    SortOptions sortBySurname = SortOptions.NONE;
+    SortOptions sortByRKK = SortOptions.NONE;
+    SortOptions sortByAppeals = SortOptions.NONE;
+    SortOptions sortBySummaryDocuments = SortOptions.NONE;
+
+    private IEnumerable<RKKStats> sorted = Enumerable.Empty<RKKStats>();
+
+    async Task SaveAs(SaveOptions saveOptions)
+    {
+        await JSRuntime.InvokeAsync<object>(
+        "FileSaveAs",
+        "stats.txt",
+        saver.SaveStatsAs(GetSorted(), saveOptions));
+    }
+
+    IEnumerable<RKKStats> GetSorted()
+    {
+        if (SortIsNotNeeded())
+            return Stats;
+
+        IEnumerable<RKKStats> sorted = null!;
+
+        if (sortBySurname is not SortOptions.NONE)
+            sorted = SortBySurname();
+        if (sortByRKK is not SortOptions.NONE)
+            sorted = SortByRKK();
+        if (sortByAppeals is not SortOptions.NONE)
+            sorted = SortByAppeals();
+        if (sortBySummaryDocuments is not SortOptions.NONE)
+            sorted = SortBySummaryDocuments();
+
+        return sorted;
+    }
+
+    IEnumerable<RKKStats> SortBySurname()
+        => sortBySurname is SortOptions.UPSCENDING
+                ? Stats.OrderBy(x => x.MainContractor.Split(' ')[0])
+                : Stats.OrderByDescending(x => x.MainContractor.Split(' ')[0]);
+
+    IEnumerable<RKKStats> SortByRKK()
+        => sortByRKK is SortOptions.UPSCENDING
+                ? Stats.OrderBy(x => x.NumberOfRKK)
+                    .ThenBy(x => x.NumOfAppeals)
+                : Stats.OrderByDescending(x => x.NumberOfRKK)
+                    .ThenByDescending(x => x.NumOfAppeals);
+    
+    IEnumerable<RKKStats> SortByAppeals()
+        => sortByAppeals is SortOptions.UPSCENDING
+                ? Stats.OrderBy(x => x.NumOfAppeals)
+                    .ThenBy(x => x.NumberOfRKK)
+                : Stats.OrderByDescending(x => x.NumOfAppeals)
+                    .ThenByDescending(x => x.NumberOfRKK);
+    
+    IEnumerable<RKKStats> SortBySummaryDocuments()
+        => sortBySummaryDocuments is SortOptions.UPSCENDING
+                ? Stats.OrderBy(x => x.SummaryDocuments)
+                    .ThenBy(x => x.NumberOfRKK)
+                : Stats.OrderByDescending(x => x.SummaryDocuments)
+                    .ThenByDescending(x => x.NumberOfRKK);
+
+    void ChangeOnSortBySurname(bool upscending)
+    {
+        sortBySurname = upscending 
+            ? SortOptions.UPSCENDING
+            : SortOptions.DESCENDING;
+
+        sortByRKK = SortOptions.NONE;
+        sortByAppeals = SortOptions.NONE;
+        sortBySummaryDocuments = SortOptions.NONE;
+    }
+
+    void ChangeOnSortByRKK(bool upscending)
+    {
+        sortByRKK = upscending 
+            ? SortOptions.UPSCENDING
+            : SortOptions.DESCENDING;
+
+        sortBySurname = SortOptions.NONE;
+        sortByAppeals = SortOptions.NONE;
+        sortBySummaryDocuments = SortOptions.NONE;
+    }
+
+    void ChangeOnSortByAppeals(bool upscending)
+    {
+        sortByAppeals= upscending 
+            ? SortOptions.UPSCENDING
+            : SortOptions.DESCENDING;
+
+        sortBySurname = SortOptions.NONE;
+        sortByRKK = SortOptions.NONE;
+        sortBySummaryDocuments = SortOptions.NONE;
+    }
+
+    void ChangeOnSortBySummaryDocuments(bool upscending)
+    {
+        sortBySummaryDocuments = upscending 
+            ? SortOptions.UPSCENDING
+            : SortOptions.DESCENDING;
+
+        sortBySurname = SortOptions.NONE;
+        sortByRKK = SortOptions.NONE;
+        sortByAppeals = SortOptions.NONE;
+    }
+
+    bool SortIsNeeded()
+        => !SortIsNotNeeded();
+
+    bool SortIsNotNeeded()
+        => sortBySurname is SortOptions.NONE
+            && sortByRKK is SortOptions.NONE
+            && sortByAppeals is SortOptions.NONE
+            && sortBySummaryDocuments is SortOptions.NONE;
+
+    enum SortOptions
+    {
+        NONE,
+        UPSCENDING,
+        DESCENDING
+    }
+}
