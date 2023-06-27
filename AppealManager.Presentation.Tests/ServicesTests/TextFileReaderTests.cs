@@ -13,7 +13,7 @@ namespace AppealManager.Presentation.Tests.ServicesTests
         [InlineData("Another text с русскими буквами и символами!?.,:;")]
         public async Task TextFileReader_Should_Read_Exact_Text(string text)
         {
-            // ASSERT
+            // ARRANGE
             var file = Substitute.For<IBrowserFile>();
             file.ContentType.Returns("text/plain");
 
@@ -39,7 +39,7 @@ namespace AppealManager.Presentation.Tests.ServicesTests
         [Fact]
         public async Task When_File_Is_Not_Plai_Text_Reader_Should_Return_None()
         {
-            // ASSERT
+            // ARRANGE
             var file = Substitute.For<IBrowserFile>();
             file.ContentType.Returns("pdf");
             var textReader = new TextFileReader();
