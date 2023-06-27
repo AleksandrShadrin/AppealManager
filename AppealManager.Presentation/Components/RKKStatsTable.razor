@@ -46,9 +46,16 @@
     {
         await JSRuntime.InvokeAsync<object>(
         "FileSaveAs",
-        "stats.txt",
+        "stats." + GetExtension(saveOptions),
         saver.SaveStatsAs(GetSorted(), saveOptions));
     }
+
+    string GetExtension(SaveOptions option)
+        => option switch
+        {
+            SaveOptions.HTML_TABLE => "html",
+            SaveOptions.PLAIN_TEXT => "txt",
+        };
 
     IEnumerable<RKKStats> GetSorted()
     {
