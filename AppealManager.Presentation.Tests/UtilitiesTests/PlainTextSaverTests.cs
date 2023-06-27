@@ -1,4 +1,5 @@
 ﻿using AppealManager.Application.Models;
+using AppealManager.Presentation.Services;
 using AppealManager.Presentation.Utilities;
 using FluentAssertions;
 
@@ -12,8 +13,9 @@ namespace AppealManager.Presentation.Tests.UtilitiesTests
             // ARRANGE
             var empty = Enumerable.Empty<RKKStats>();
             var clock = () => new DateTime(2000, 2, 15);
-            var saver = new RKKStatsSaverAsPlainText(clock);
+            var saver = new RKKStatsSaverAsPlainText(clock, clock());
             var shouldBe = "Отчет сохранён: 15.02.2000 0:00:00\r\n"
+                + "Программа была запущена: 15.02.2000 0:00:00\r\n"
                 + "Главный исполнитель|Количество РКК|Количество обращений|Суммарное количество документов|";
             // ACT
             var res = saver.SaveStats(empty);
@@ -33,8 +35,9 @@ namespace AppealManager.Presentation.Tests.UtilitiesTests
             };
 
             var clock = () => new DateTime(2000, 2, 15);
-            var saver = new RKKStatsSaverAsPlainText(clock);
+            var saver = new RKKStatsSaverAsPlainText(clock, clock());
             var shouldBe = "Отчет сохранён: 15.02.2000 0:00:00\r\n"
+                + "Программа была запущена: 15.02.2000 0:00:00\r\n"
                 + "Главный исполнитель|Количество РКК|Количество обращений|Суммарное количество документов|\r\n" 
                 + "               name|             4|                   4|                              8|\r\n"
                 + "              name2|             4|                   4|                              8|";
