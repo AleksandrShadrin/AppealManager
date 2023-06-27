@@ -33,6 +33,11 @@ namespace AppealManager.Application.Tests.ServicesTests
                 .Should()
                 .HaveCount(1);
 
+            appealReader
+                .ReceivedCalls()
+                .Should()
+                .HaveCount(1);
+
             RKKReader
                 .Received()
                 .ReadRKKs
