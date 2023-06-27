@@ -1,4 +1,5 @@
 ﻿using AppealManager.Application.Models;
+using AppealManager.Presentation.Services;
 
 namespace AppealManager.Presentation.Utilities
 {
@@ -8,10 +9,12 @@ namespace AppealManager.Presentation.Utilities
     public class RKKMultipleStatsSaver
     {
         Func<DateTime> _clock;
+        public GlobalStateService _globalService { get; set; }
 
-        public RKKMultipleStatsSaver(Func<DateTime> clock)
+        public RKKMultipleStatsSaver(Func<DateTime> clock, GlobalStateService globalService)
         {
             _clock = clock;
+            _globalService = globalService;
         }
         /// <summary>
         /// Сохраняет коллекцию RKKStats в выбранном формате
@@ -28,8 +31,8 @@ namespace AppealManager.Presentation.Utilities
         private IRKKStatsSaver GetRKKSaver(SaveOptions saveOptions)
             => saveOptions switch
             {
-                SaveOptions.HTML_TABLE => new RKKStatsSaverAsHtml(_clock),
-                SaveOptions.PLAIN_TEXT => new RKKStatsSaverAsPlainText(_clock),
+                SaveOptions.HTML_TABLE => new RKKStatsSaverAsHtml(_clock, _globalService.ProgramLaunchedAt),
+                SaveOptions.PLAIN_TEXT => new RKKStatsSaverAsPlainText(_clock, _globalService.ProgramLaunchedAt),
             };
 
         public enum SaveOptions

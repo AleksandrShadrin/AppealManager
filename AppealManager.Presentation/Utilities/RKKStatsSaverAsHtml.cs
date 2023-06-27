@@ -9,10 +9,12 @@ namespace AppealManager.Presentation.Utilities
     public class RKKStatsSaverAsHtml : IRKKStatsSaver
     {
         private Func<DateTime> _clock;
-        
-        public RKKStatsSaverAsHtml(Func<DateTime> clock)
+        private DateTime _programLaunchedTime;
+
+        public RKKStatsSaverAsHtml(Func<DateTime> clock, DateTime programLaunchedTime)
         {
             _clock = clock;
+            _programLaunchedTime = programLaunchedTime;
         }
 
         /// <summary>
@@ -35,6 +37,9 @@ namespace AppealManager.Presentation.Utilities
             sb.Append(@"</table>");
             sb.Append("<h2>");
             sb.Append($"Отчет сохранен: {_clock()}");
+            sb.Append("</h2>");
+            sb.Append("<h2>");
+            sb.Append($"Программа была запущена: {_programLaunchedTime}");
             sb.Append("</h2>");
             return sb.ToString();
         }

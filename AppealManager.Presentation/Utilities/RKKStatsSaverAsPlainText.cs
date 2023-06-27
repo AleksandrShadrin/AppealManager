@@ -12,10 +12,12 @@ namespace AppealManager.Presentation.Utilities
         /// Возвращает текущее время
         /// </summary>
         private Func<DateTime> _clock;
+        private DateTime _programLaunchedTime;
 
-        public RKKStatsSaverAsPlainText(Func<DateTime> clock)
+        public RKKStatsSaverAsPlainText(Func<DateTime> clock, DateTime programLaunchedTime)
         {
             _clock = clock;
+            _programLaunchedTime = programLaunchedTime;
         }
 
         /// <summary>
@@ -42,6 +44,7 @@ namespace AppealManager.Presentation.Utilities
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"Отчет сохранён: {_clock()}");
+            sb.AppendLine($"Программа была запущена: {_programLaunchedTime}");
             sb.Append("Главный исполнитель|".PadLeft(maxLengths.Item1));
             sb.Append("Количество РКК|".PadLeft(maxLengths.Item2));
             sb.Append("Количество обращений|".PadLeft(maxLengths.Item3));
