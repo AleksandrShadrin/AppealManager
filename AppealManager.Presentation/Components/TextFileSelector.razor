@@ -1,5 +1,6 @@
 ﻿@using AppealManager.Presentation.Services;
 @using System.Diagnostics;
+@using LanguageExt;
 
 @inject TextFileReader textFileReader;
 
@@ -9,6 +10,11 @@
 @if (timeWasMeasured)
 {
     <h5>Файл загружен за: @elapsedMilliseconds мс</h5>    
+}
+
+@if(isError)
+{
+    <h5 class="text-danger">@error</h5>
 }
 
 @code {
@@ -24,6 +30,8 @@
     private bool isLoading = false;
     private long elapsedMilliseconds = 0;
     private bool timeWasMeasured = false;
+    private bool isError = false;
+    private const string error = "Ошибка в считывании файла";
 
     /// <summary>
     /// Загружает текст файла
@@ -32,15 +40,26 @@
     async Task LoadFile(InputFileChangeEventArgs e)
     {
         isLoading = true;
-        string text = "";
+        timeWasMeasured = false;
+        isError = false;
+        Option<string> text = Option<string>.None;
 
         elapsedMilliseconds = await MeasureTime
             (
                 async () => text = await GetTextFromFile(e.File)
             );
 
-        timeWasMeasured = true;
-        await TextChanged.InvokeAsync(text);
+        await text
+            .BiIterAsync
+            (
+                Some: async value =>
+                {
+                    timeWasMeasured = true;
+                    await TextChanged.InvokeAsync(text.First());
+                },
+                None: () => isError = true
+            );
+
         isLoading = false;
     }
 
@@ -59,11 +78,6 @@
         return stopwatch.ElapsedMilliseconds;
     }
 
-    async Task<string> GetTextFromFile(IBrowserFile file)
-        => await textFileReader.ReadFileAsync(file)
-            .Match
-                (
-                    Some: x => x,
-                    None: () => ""
-                );
+    async Task<Option<string>> GetTextFromFile(IBrowserFile file)
+        => await textFileReader.ReadFileAsync(file);
 }
